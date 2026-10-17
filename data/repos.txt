@@ -1,0 +1,2 @@
+# Add one public GitHub repository per line in owner/name form.
+# Example: thuml/iTransformer
