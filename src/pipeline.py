@@ -25,6 +25,7 @@ def run_repo(repo: str, paper_path: Path | None = None, force: bool = False) -> 
     claims = extract_claims(paper_text)
 
     source_jsonl = Path(__file__).resolve().parents[1] / "data" / "repo_docs" / f"{repo_name}.jsonl"
+    
     if not source_jsonl.is_file():
         export_repo_docs(repo, download_repo(repo))
     index_repo(repo, repo_name)

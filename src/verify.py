@@ -4,7 +4,6 @@ from src.llm import complete_json
 
 VERDICTS = {"supported", "contradicted", "not_found"}
 
-
 def verify_claim(claim: str, claim_type: str, evidence: list[dict[str, Any]]) -> dict[str, Any]:
     evidence_text = "\n\n".join(
         f"Evidence {index} | {item['path']}:{item['start_line']}-{item['end_line']}\n"
@@ -24,6 +23,7 @@ def verify_claim(claim: str, claim_type: str, evidence: list[dict[str, Any]]) ->
         ),
     )
     verdict = str(result.get("verdict", "not_found")).strip().lower()
+    
     if verdict not in VERDICTS:
         raise RuntimeError(f"Verifier returned an invalid verdict: {verdict}")
     reasoning = result.get("reasoning")

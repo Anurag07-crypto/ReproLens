@@ -1,2 +1,15 @@
 # Add one public GitHub repository per line in owner/name form.
-# Example: thuml/iTransformer
+thuml/iTransformer                             
+lss-1138/SparseTSF                                    
+uclaml/SPIN                                           
+thuml/AutoTimes                                
+thuml/Large-Time-Series-Model                  
+dongbeank/CATS                                 
+romilbert/samformer                                   
+Vance0124/Token-level-Direct-Preference-Optimization  
+haozheji/exact-optimization                    
+xuangu-fang/BayOTIDE                            
+JAEarly/MILTimeSeriesClassification                   
+zkxufo/TTM                                     
+dmksjfl/SEABO                                   
+thunlp/InfLLM  
