@@ -2,7 +2,6 @@ from typing import Any
 
 from src.llm import complete_json
 
-
 CLAIM_TYPES = {
     "hyperparameter",
     "architecture",

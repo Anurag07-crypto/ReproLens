@@ -9,6 +9,7 @@ data/papers/*
 data/repo_docs/*
 !data/repo_docs/.gitkeep
 data/repos/
+data/embedding_models/
 chroma_db/
 tmp_clone/
 app/web/node_modules/

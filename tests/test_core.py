@@ -1,22 +1,55 @@
 import csv
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import chromadb
 from eval.evaluate import evaluate
 from fastapi.testclient import TestClient
 import src.index_repo as index_module
+from src.config import EMBEDDING_CACHE_DIR, EMBEDDING_MODEL
 from src.download_repos import _safe_name, export_repo_docs
 from src.index_repo import chunk_lines, index_repo
+from src.llm import _embedding_model, complete_json, embed_texts
 from src.parse_paper import select_experiment_sections
 from src.retrieve import retrieve_evidence
 from src.verify import verify_claim
 
 
 class CoreTests(unittest.TestCase):
+    def test_embed_texts_uses_local_model_and_returns_float_lists(self):
+        model = Mock()
+        model.embed.return_value = [[0.25, 0.75], [1, 0]]
+        _embedding_model.cache_clear()
+        try:
+            with patch("src.llm.TextEmbedding", return_value=model) as text_embedding:
+                vectors = embed_texts(["first text", "second text"])
+        finally:
+            _embedding_model.cache_clear()
+
+        text_embedding.assert_called_once_with(
+            model_name=EMBEDDING_MODEL,
+            cache_dir=str(EMBEDDING_CACHE_DIR),
+        )
+        model.embed.assert_called_once_with(["first text", "second text"])
+        self.assertEqual(vectors, [[0.25, 0.75], [1.0, 0.0]])
+
+    @patch("src.llm.ChatGroq")
+    def test_complete_json_uses_groq_and_parses_json_object(self, chat_groq):
+        chat_groq.return_value.invoke.return_value = Mock(content='{"verdict": "supported"}')
+        with patch.dict(os.environ, {"GROQ_API_KEY": "test-key"}):
+            result = complete_json("system instructions", "user request")
+
+        self.assertEqual(result, {"verdict": "supported"})
+        chat_groq.assert_called_once()
+        self.assertEqual(
+            chat_groq.return_value.invoke.call_args.args[0],
+            [("system", "system instructions"), ("human", "user request")],
+        )
+
     def test_safe_repo_name_rejects_path_traversal(self):
         self.assertEqual(_safe_name("thuml/iTransformer"), "iTransformer")
         for repo in ("../outside", "owner/..", "owner\\..", "owner/repo/extra"):

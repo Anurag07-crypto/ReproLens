@@ -51,7 +51,7 @@ def load_repo_chunks(repo_name: str) -> list[dict[str, object]]:
 
 
 def collection_name() -> str:
-    return "reprolens-source"
+    return "reprolens-source-bge-small-en-v1-5"
 
 
 def index_repo(repo: str, repo_name: str | None = None) -> int:

@@ -19,7 +19,7 @@ ReproLens checks claims against code; it does **not** rerun experiments or verif
 - Python 3.11+
 - Git on `PATH`
 - Node.js 18+ and npm (for the web UI)
-- An OpenAI-compatible API key with chat-completion and embedding endpoints
+- A Groq API key for chat completions; embeddings run locally with a free model
 
 ## Setup
 
@@ -32,7 +32,7 @@ python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Set `LLM_API_KEY` in `.env`. `LLM_BASE_URL`, `LLM_MODEL`, and `EMBEDDING_MODEL` can be changed for a compatible API. Do not commit `.env`.
+Set `GROQ_API_KEY` in `.env` for chat completions. Embeddings use the free `BAAI/bge-small-en-v1.5` model locally through FastEmbed; it is downloaded the first time embeddings are generated and does not require an embeddings API key. `LLM_MODEL` selects the Groq model. Do not commit `.env`.
 
 Add PDFs as `data/papers/<repo-name>.pdf` and one GitHub identifier per line to `data/repos.txt`:
 
