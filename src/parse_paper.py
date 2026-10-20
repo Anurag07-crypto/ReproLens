@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 
-from pypdf import PdfReader
+from langchain_community.document_loaders import PyPDFLoader
 
 
 SECTION_TERMS = (
@@ -22,7 +22,8 @@ def extract_experiment_text(pdf_path: Path) -> str:
     if not pdf_path.is_file():
         raise FileNotFoundError(f"Paper PDF not found: {pdf_path}")
     try:
-        text = "\n".join(page.extract_text() or "" for page in PdfReader(str(pdf_path)).pages)
+        documents = PyPDFLoader(str(pdf_path)).load()
+        text = "\n".join(document.page_content for document in documents)
     except Exception as error:
         raise ValueError(f"Could not read paper PDF '{pdf_path}': {error}") from error
     if not text.strip():

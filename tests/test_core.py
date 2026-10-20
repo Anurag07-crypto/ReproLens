@@ -14,7 +14,7 @@ from src.config import EMBEDDING_CACHE_DIR, EMBEDDING_MODEL
 from src.download_repos import _safe_name, export_repo_docs
 from src.index_repo import chunk_lines, index_repo
 from src.llm import _embedding_model, complete_json, embed_texts
-from src.parse_paper import select_experiment_sections
+from src.parse_paper import extract_experiment_text, select_experiment_sections
 from src.retrieve import retrieve_evidence
 from src.verify import verify_claim
 
@@ -93,6 +93,22 @@ class CoreTests(unittest.TestCase):
         self.assertIn("We use Adam at 1e-3.", selected)
         self.assertIn("Dataset details.", selected)
         self.assertNotIn("Conclusion text.", selected)
+
+    @patch("src.parse_paper.PyPDFLoader")
+    def test_extract_experiment_text_uses_langchain_pdf_loader(self, pdf_loader):
+        pdf_loader.return_value.load.return_value = [
+            Mock(page_content="4 Experiments\nExperimental overview."),
+            Mock(page_content="4.1 Details\nWe use Adam at 1e-3.\n5 Conclusion\nEnd."),
+        ]
+        with tempfile.TemporaryDirectory() as temp:
+            pdf_path = Path(temp) / "paper.pdf"
+            pdf_path.touch()
+            text = extract_experiment_text(pdf_path)
+
+        pdf_loader.assert_called_once_with(str(pdf_path))
+        self.assertIn("Experimental overview.", text)
+        self.assertIn("We use Adam at 1e-3.", text)
+        self.assertNotIn("End.", text)
 
     def test_chunk_lines_preserves_line_ranges_and_overlap(self):
         chunks = chunk_lines("train.py", "\n".join(f"line_{i}" for i in range(1, 90)))
