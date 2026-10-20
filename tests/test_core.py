@@ -9,7 +9,7 @@ import chromadb
 from eval.evaluate import evaluate
 from fastapi.testclient import TestClient
 import src.index_repo as index_module
-from src.download_repos import _safe_name
+from src.download_repos import _safe_name, export_repo_docs
 from src.index_repo import chunk_lines, index_repo
 from src.parse_paper import select_experiment_sections
 from src.retrieve import retrieve_evidence
@@ -22,6 +22,31 @@ class CoreTests(unittest.TestCase):
         for repo in ("../outside", "owner/..", "owner\\..", "owner/repo/extra"):
             with self.subTest(repo=repo), self.assertRaises(ValueError):
                 _safe_name(repo)
+
+    def test_export_repo_docs_uses_filtered_directory_loader(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            repo_path = root / "repo"
+            (repo_path / "src").mkdir(parents=True)
+            (repo_path / "README.md").write_text("overview", encoding="utf-8")
+            (repo_path / "src" / "train.py").write_text("train()", encoding="utf-8")
+            (repo_path / "node_modules").mkdir()
+            (repo_path / "node_modules" / "ignored.py").write_text("ignored", encoding="utf-8")
+            (repo_path / "large.json").write_text("x" * 1_000_001, encoding="utf-8")
+            (repo_path / "notes.csv").write_text("ignored", encoding="utf-8")
+            docs_dir = root / "docs"
+
+            with patch("src.download_repos.REPO_DOCS_DIR", docs_dir):
+                output = export_repo_docs("owner/repo", repo_path)
+
+            documents = [json.loads(line) for line in output.read_text(encoding="utf-8").splitlines()]
+        self.assertEqual(
+            documents,
+            [
+                {"path": "README.md", "content": "overview"},
+                {"path": "src/train.py", "content": "train()"},
+            ],
+        )
 
     def test_paper_section_includes_numbered_subsections(self):
         text = (
