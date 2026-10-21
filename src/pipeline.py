@@ -3,6 +3,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.config import PAPERS_DIR, REPORTS_DIR
 from src.download_repos import download_repo, export_repo_docs, read_repos

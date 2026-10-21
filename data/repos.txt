@@ -12,4 +12,4 @@ xuangu-fang/BayOTIDE
 JAEarly/MILTimeSeriesClassification                   
 zkxufo/TTM                                     
 dmksjfl/SEABO                                   
-thunlp/InfLLM  
+thunlp/InfLLM   
