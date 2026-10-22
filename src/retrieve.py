@@ -3,7 +3,8 @@ from collections import Counter
 from pathlib import Path
 
 import chromadb
-
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.config import CHROMA_DIR, TOP_K
 from src.index_repo import collection_name, load_repo_chunks
 from src.llm import embed_texts

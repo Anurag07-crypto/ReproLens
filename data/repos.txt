@@ -8,8 +8,6 @@ dongbeank/CATS
 romilbert/samformer                                   
 Vance0124/Token-level-Direct-Preference-Optimization  
 haozheji/exact-optimization                    
-xuangu-fang/BayOTIDE                            
-JAEarly/MILTimeSeriesClassification                   
 zkxufo/TTM                                     
 dmksjfl/SEABO                                   
 thunlp/InfLLM   

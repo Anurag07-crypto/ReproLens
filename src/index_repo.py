@@ -2,7 +2,8 @@ import json
 from pathlib import Path
 
 import chromadb
-
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.config import CHROMA_DIR, CHUNK_LINES, CHUNK_OVERLAP, REPO_DOCS_DIR
 from src.llm import embed_texts
 

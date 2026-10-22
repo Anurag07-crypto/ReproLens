@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 import src.index_repo as index_module
 from src.config import EMBEDDING_CACHE_DIR, EMBEDDING_MODEL
 from src.download_repos import _safe_name, export_repo_docs
+from src.extract_claims import MAX_PAPER_TEXT_CHARS, extract_claims
 from src.index_repo import chunk_lines, index_repo
 from src.llm import _embedding_model, complete_json, embed_texts
 from src.parse_paper import extract_experiment_text, select_experiment_sections
@@ -45,10 +46,22 @@ class CoreTests(unittest.TestCase):
 
         self.assertEqual(result, {"verdict": "supported"})
         chat_groq.assert_called_once()
+        self.assertEqual(chat_groq.call_args.kwargs["max_tokens"], 2048)
         self.assertEqual(
             chat_groq.return_value.invoke.call_args.args[0],
             [("system", "system instructions"), ("human", "user request")],
         )
+
+    @patch("src.extract_claims.complete_json")
+    def test_claim_extraction_caps_paper_text_to_fit_model_limits(self, complete_json):
+        complete_json.return_value = {
+            "claims": [{"claim": "The model uses Adam.", "claim_type": "training"}]
+        }
+        claims = extract_claims("paper " * MAX_PAPER_TEXT_CHARS)
+
+        user_prompt = complete_json.call_args.args[1]
+        self.assertEqual(claims[0]["claim"], "The model uses Adam.")
+        self.assertEqual(len(user_prompt.split("PAPER TEXT:\n", 1)[1]), MAX_PAPER_TEXT_CHARS)
 
     def test_safe_repo_name_rejects_path_traversal(self):
         self.assertEqual(_safe_name("thuml/iTransformer"), "iTransformer")
@@ -94,6 +107,51 @@ class CoreTests(unittest.TestCase):
         self.assertIn("Dataset details.", selected)
         self.assertNotIn("Conclusion text.", selected)
 
+    def test_paper_section_keeps_content_after_unheaded_lines(self):
+        text = (
+            "4 Experiments\n"
+            "We evaluate the method on three datasets.\n"
+            "Datasets\n"
+            "The experiments use ETT and Weather.\n"
+            "4.1 Training Details\n"
+            "We train for 100 epochs.\n"
+            "5 Conclusion\n"
+            "The paper concludes."
+        )
+        selected = select_experiment_sections(text)
+        self.assertIn("We evaluate the method on three datasets.", selected)
+        self.assertIn("The experiments use ETT and Weather.", selected)
+        self.assertIn("We train for 100 epochs.", selected)
+        self.assertNotIn("The paper concludes.", selected)
+
+    def test_paper_section_does_not_duplicate_nested_sections(self):
+        text = (
+            "4 Experiments\n"
+            "The optimizer is Adam.\n"
+            "4.1 Implementation Details\n"
+            "We train for 100 epochs.\n"
+            "5 Conclusion\n"
+            "The paper concludes."
+        )
+        selected = select_experiment_sections(text)
+        self.assertEqual(selected.count("The optimizer is Adam."), 1)
+        self.assertEqual(selected.count("We train for 100 epochs."), 1)
+
+    def test_paper_section_recognizes_inline_multicolumn_heading(self):
+        text = (
+            "A sentence in another column ends here. 5. Experiments\n"
+            "5.1 Synthetic Data\n"
+            "We evaluate on simulated sequences.\n"
+            "5.2 Real-World Data\n"
+            "We evaluate on weather observations.\n"
+            "6. Conclusion\n"
+            "The paper concludes."
+        )
+        selected = select_experiment_sections(text)
+        self.assertIn("We evaluate on simulated sequences.", selected)
+        self.assertIn("We evaluate on weather observations.", selected)
+        self.assertNotIn("The paper concludes.", selected)
+
     @patch("src.parse_paper.PyPDFLoader")
     def test_extract_experiment_text_uses_langchain_pdf_loader(self, pdf_loader):
         pdf_loader.return_value.load.return_value = [
@@ -105,7 +163,7 @@ class CoreTests(unittest.TestCase):
             pdf_path.touch()
             text = extract_experiment_text(pdf_path)
 
-        pdf_loader.assert_called_once_with(str(pdf_path))
+        pdf_loader.assert_called_once_with(str(pdf_path), extraction_mode="layout")
         self.assertIn("Experimental overview.", text)
         self.assertIn("We use Adam at 1e-3.", text)
         self.assertNotIn("End.", text)

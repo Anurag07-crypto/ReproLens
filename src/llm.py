@@ -2,11 +2,18 @@ import json
 import os
 from functools import lru_cache
 from typing import Any
+from dotenv import load_dotenv
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+load_dotenv()
 
 from fastembed import TextEmbedding
 from langchain_groq import ChatGroq
 
 from src.config import EMBEDDING_CACHE_DIR, EMBEDDING_MODEL, LLM_MODEL
+
+MAX_COMPLETION_TOKENS = 2048
 
 
 @lru_cache(maxsize=1)
@@ -25,6 +32,7 @@ def complete_json(system_prompt: str, user_prompt: str) -> dict[str, Any]:
         api_key=api_key,
         model=LLM_MODEL,
         temperature=0,
+        max_tokens=MAX_COMPLETION_TOKENS,
         model_kwargs={"response_format": {"type": "json_object"}},
     )
     response = llm.invoke(
