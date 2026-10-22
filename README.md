@@ -66,9 +66,11 @@ npm run dev
 
 Open the Vite URL shown in the terminal (usually `http://localhost:5173`). The API is available at `http://127.0.0.1:8000/docs`. To serve a production UI from FastAPI, build it with `npm run build`; then open the API root.
 
+The API exposes `GET /repos` and `GET /report/<repo-name>` for repository availability and report JSON. The same endpoints are also available under `/api/` for the web UI.
+
 ## Evaluation
 
-Add hand-verified rows to `data/labels.csv` with columns `repo,claim_type,claim,ground_truth,evidence_file`. `ground_truth` must be `supported`, `contradicted`, or `not_found`. Populate `data/splits.json` with repository identifiers in separate `dev` and `test` arrays. Use repository identifiers in labels and splits exactly as the pipeline report's `repo` value, for example `thuml/iTransformer`.
+Add hand-verified rows to `data/labels.csv` with columns `repo,claim_type,claim,ground_truth,evidence_file,rationale`. Determine each ground truth by inspecting the repository independently, not by copying the pipeline's verdict or citations. `ground_truth` must be `supported`, `contradicted`, or `not_found`; include source paths and a short rationale for each manual label. Populate `data/splits.json` with repository identifiers in separate `dev` and `test` arrays; keep repositories disjoint between splits. Use repository identifiers in labels and splits exactly as the pipeline report's `repo` value, for example `thuml/iTransformer`.
 
 Run the retrieval-free baseline against existing reports and evaluate both systems:
 
@@ -77,7 +79,7 @@ python -m eval.baseline
 python -m eval.evaluate
 ```
 
-The baseline asks the same claim about general model knowledge without code retrieval. It is not a human-quality oracle. Evaluation reports per-verdict one-vs-rest precision/recall and accuracy overall and by claim type. The repository starts with empty labels and splits; **no benchmark results are claimed until the dataset is annotated and evaluated**. The generated `eval/results.md` is the place to put real dev/test numbers for a demo or submission.
+The baseline asks the same claim about general model knowledge without code retrieval. It is not a human-quality oracle. Evaluation reports per-verdict one-vs-rest precision/recall and accuracy overall and by claim type. Empty splits are shown as `n/a`; **do not present an empty test split as measured test performance**. The generated `eval/results.md` is the place to put real dev/test numbers for a demo or submission.
 
 ## Limitations
 

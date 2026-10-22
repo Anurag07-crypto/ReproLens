@@ -1,0 +1,48 @@
+{
+  "repo": "thuml/AutoTimes",
+  "generated_at": "2026-10-22T04:26:39.869364+00:00",
+  "claims": [
+    {
+      "claim": "AutoTimes processes timestamps in textual form rather than numerical encoding.",
+      "claim_type": "preprocessing",
+      "verdict": "not_found",
+      "reasoning": "No evidence found in repository to confirm or refute the claim.",
+      "evidence": []
+    },
+    {
+      "claim": "AutoTimes obtains embeddings for the special token <EOS> using a large language model to capture the embedding for the entire sentence.",
+      "claim_type": "architecture",
+      "verdict": "not_found",
+      "reasoning": "The claim refers to a specific architectural detail of a paper titled \"AutoTimes\" involving embeddings for the special token <EOS> derived from a large language model. Based on general knowledge, there is no widely recognized or documented evidence that AutoTimes employs a large language model to generate embeddings for <EOS> to represent entire sentences. Without access to the paper's content or repository, this claim cannot be verified or refuted, so the conservative classification is \"not_found\".",
+      "evidence": []
+    },
+    {
+      "claim": "The initial learning rate used for training is chosen from the set {10−3, 5×10−4, 10−4}.",
+      "claim_type": "hyperparameter",
+      "verdict": "not_found",
+      "reasoning": "No evidence from the repository or external sources confirms that the initial learning rate was chosen from the set {10−3, 5×10−4, 10−4}.",
+      "evidence": []
+    },
+    {
+      "claim": "The batch size used during training is chosen from the set {256, 1024, 2048}.",
+      "claim_type": "hyperparameter",
+      "verdict": "not_found",
+      "reasoning": "No evidence found in the provided context.",
+      "evidence": []
+    },
+    {
+      "claim": "The number of training epochs is set to 10.",
+      "claim_type": "training",
+      "verdict": "not_found",
+      "reasoning": "No evidence found in repository.",
+      "evidence": []
+    },
+    {
+      "claim": "SegmentEmbedding and SegmentProjection are implemented either as a linear layer or as a multilayer perceptron (MLP).",
+      "claim_type": "architecture",
+      "verdict": "not_found",
+      "reasoning": "The claim refers to specific implementation details (SegmentEmbedding and SegmentProjection) that are not supported by general knowledge or publicly available information. Without access to the repository or the paper's code, there is no evidence to confirm or refute the claim. Therefore, the appropriate verdict is not_found.",
+      "evidence": []
+    }
+  ]
+}

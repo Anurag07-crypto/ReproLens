@@ -1,0 +1,48 @@
+{
+  "repo": "thuml/iTransformer",
+  "generated_at": "2026-10-22T04:21:05.071151+00:00",
+  "claims": [
+    {
+      "claim": "The experiments use seven real-world datasets: ECL, ETT (four subsets), Exchange, Traffic, Weather, Solar‑Energy, and PEMS (four subsets).",
+      "claim_type": "dataset",
+      "verdict": "not_found",
+      "reasoning": "No evidence available to confirm or refute the claim.",
+      "evidence": []
+    },
+    {
+      "claim": "The forecasting experiments use prediction lengths S∈{12,24,36,48} for PEMS and S∈{96,192,336,720} for the other datasets, with a fixed lookback length T=96.",
+      "claim_type": "training",
+      "verdict": "not_found",
+      "reasoning": "No evidence found in the repository or general knowledge to confirm or refute the claim.",
+      "evidence": []
+    },
+    {
+      "claim": "The iTransformer framework is applied to Transformer and its variants Reformer, Informer, Flowformer, and FlashAttention.",
+      "claim_type": "architecture",
+      "verdict": "not_found",
+      "reasoning": "The claim states that the iTransformer framework has been applied to Transformer and its variants Reformer, Informer, Flowformer, and FlashAttention. Based on publicly available information and the literature up to 2024, there is no documented evidence that the iTransformer framework has been specifically applied to all of these variants, particularly FlashAttention, which is an implementation rather than a distinct Transformer variant. Therefore, without repository evidence or a known source confirming this application, the claim cannot be verified and is classified as not_found.",
+      "evidence": []
+    },
+    {
+      "claim": "Applying the iTransformer framework yields an average performance promotion of 38.9% on Transformer, 36.1% on Reformer, 28.5% on Informer, 16.8% on Flowformer, and 32.2% on FlashAttention.",
+      "claim_type": "other",
+      "verdict": "not_found",
+      "reasoning": "No known evidence or widely cited results support the specific performance improvements claimed for iTransformer on Transformer, Reformer, Informer, Flowformer, and FlashAttention. Without repository or external source confirmation, the claim cannot be verified and is therefore classified as not_found.",
+      "evidence": []
+    },
+    {
+      "claim": "During training, the model randomly selects a subset of variates in each batch and trains only on the selected variates, while still predicting all variates during inference.",
+      "claim_type": "training",
+      "verdict": "not_found",
+      "reasoning": "The claim describes a training strategy where a model randomly selects a subset of variates per batch and trains only on those, while still predicting all variates during inference. This specific technique is not a widely recognized or documented method in standard machine learning literature, and no evidence from the repository or known sources supports its existence. Therefore, based on general knowledge and without repository evidence, the claim is classified as not_found.",
+      "evidence": []
+    },
+    {
+      "claim": "In the iTransformer architecture, attention is applied on the variate dimension and feed‑forward networks are applied on the temporal dimension.",
+      "claim_type": "architecture",
+      "verdict": "supported",
+      "reasoning": "The iTransformer paper describes a transformer variant where the self‑attention mechanism operates across the variate (feature) dimension, while the feed‑forward sub‑network processes information along the temporal dimension. This matches the claim exactly.",
+      "evidence": []
+    }
+  ]
+}

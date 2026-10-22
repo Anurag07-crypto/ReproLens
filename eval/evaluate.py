@@ -103,7 +103,7 @@ def _to_markdown(results: dict[str, Any]) -> str:
         "# Evaluation results",
         "",
         "Metrics are computed only for manually labelled claims assigned to each split. "
-        "No benchmark values are included until labels and reports are available.",
+        "An empty split is not a measured result and is reported as n/a.",
         "",
         "| Split | System | Claims | Accuracy | Supported P/R | Contradicted P/R | Not found P/R |",
         "|---|---|---:|---:|---:|---:|---:|",

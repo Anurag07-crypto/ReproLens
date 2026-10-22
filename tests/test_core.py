@@ -306,9 +306,13 @@ class CoreTests(unittest.TestCase):
             ):
                 client = TestClient(api.app)
                 repos = client.get("/api/repos")
+                repos_alias = client.get("/repos")
                 report = client.get("/api/report/demo")
+                report_alias = client.get("/report/demo")
                 missing = client.get("/api/report/missing")
+                missing_alias = client.get("/report/missing")
         self.assertEqual(repos.status_code, 200)
+        self.assertEqual(repos_alias.status_code, 200)
         self.assertEqual(
             repos.json(),
             [
@@ -316,8 +320,11 @@ class CoreTests(unittest.TestCase):
                 {"name": "missing", "repo": "owner/missing", "has_report": False},
             ],
         )
+        self.assertEqual(repos_alias.json(), repos.json())
         self.assertEqual(report.json()["repo"], "owner/demo")
+        self.assertEqual(report_alias.json(), report.json())
         self.assertEqual(missing.status_code, 404)
+        self.assertEqual(missing_alias.status_code, 404)
 
 
 if __name__ == "__main__":

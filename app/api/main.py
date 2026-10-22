@@ -2,6 +2,9 @@ import json
 import re
 from pathlib import Path
 from typing import Any
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
@@ -23,6 +26,7 @@ def _report_path(repo_name: str) -> Path:
     return REPORTS_DIR / f"{repo_name}.json"
 
 
+@app.get("/repos")
 @app.get("/api/repos")
 def list_repositories() -> list[dict[str, Any]]:
     available = {path.stem for path in REPORTS_DIR.glob("*.json")} if REPORTS_DIR.is_dir() else set()
@@ -35,6 +39,7 @@ def list_repositories() -> list[dict[str, Any]]:
     ]
 
 
+@app.get("/report/{repo_name}")
 @app.get("/api/report/{repo_name}")
 def get_report(repo_name: str) -> dict[str, Any]:
     path = _report_path(repo_name)
