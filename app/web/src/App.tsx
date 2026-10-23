@@ -91,6 +91,7 @@ export default function App() {
         <div className="eyebrow">RESEARCH REPRODUCIBILITY · EVIDENCE FIRST</div>
         <h1>Does the code<br /><span>match the paper?</span></h1>
         <p>Check specific experimental claims against the repository.<br />Every verdict comes with the code lines behind it.</p>
+        <div className="demo-note">Demo version · results are for demonstration purposes</div>
       </section>
 
       <section className="workspace">

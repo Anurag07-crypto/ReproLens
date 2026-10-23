@@ -3,20 +3,20 @@
 :root {
   font-family: "DM Sans", sans-serif;
   color: #e9ede7;
-  background: #101510;
+  background: #171313;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  --muted: #899287;
-  --line: #2a3329;
-  --panel: #151b15;
-  --green: #b4ed7b;
+  --muted: #a09390;
+  --line: #382b29;
+  --panel: #1b1616;
+  --green: #e99a91;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 350px; background: radial-gradient(ellipse at 51% -26%, #293b25 0, #101510 46rem); }
+body { margin: 0; min-width: 350px; background: radial-gradient(ellipse at 51% -26%, #402727 0, #171313 46rem); }
 button, select { font: inherit; }
 .page-shell { max-width: 1220px; margin: 0 auto; padding: 0 38px; }
-.topbar { height: 74px; border-bottom: 1px solid rgba(185, 204, 176, .12); display: flex; align-items: center; justify-content: space-between; }
+.topbar { height: 74px; border-bottom: 1px solid rgba(226, 168, 158, .14); display: flex; align-items: center; justify-content: space-between; }
 .wordmark { display: inline-flex; gap: 10px; align-items: center; color: #f4f7f1; text-decoration: none; font: 600 17px "Space Grotesk", sans-serif; letter-spacing: -.5px; }
 .wordmark-light { color: #a6b09f; font-weight: 400; }
 .mark { background: var(--green); color: #12200e; border-radius: 7px 7px 7px 2px; width: 26px; height: 26px; display: grid; place-items: center; font-weight: 700; font-size: 15px; }
@@ -28,11 +28,12 @@ button, select { font: inherit; }
 h1 { font: 600 clamp(40px, 6vw, 64px)/1.03 "Space Grotesk", sans-serif; letter-spacing: -3.5px; margin: 20px 0 17px; }
 h1 span { color: var(--green); }
 .hero p { color: #9ba597; font-size: 15px; line-height: 1.7; margin: 0; }
-.workspace { border: 1px solid #30392e; background: rgba(20, 26, 20, .94); border-radius: 12px; overflow: hidden; box-shadow: 0 22px 80px #0003; }
+.demo-note { display: inline-block; margin-top: 18px; padding: 7px 11px; border: 1px solid #593a36; border-radius: 999px; background: rgba(91, 48, 44, .28); color: #e3aaa2; font: 10px "DM Mono", monospace; letter-spacing: .2px; }
+.workspace { border: 1px solid #40302e; background: rgba(27, 22, 22, .94); border-radius: 12px; overflow: hidden; box-shadow: 0 22px 80px #0003; }
 .workspace-head { padding: 25px 28px; display: flex; gap: 20px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
 .workspace-head h2 { font: 500 20px "Space Grotesk", sans-serif; margin: 7px 0 0; }
 .repo-picker { min-width: 270px; display: flex; flex-direction: column; gap: 7px; }
-.repo-picker select { appearance: none; border: 1px solid #394434; border-radius: 6px; padding: 10px 34px 10px 12px; color: #e6eae3; background: #1c241b; cursor: pointer; }
+.repo-picker select { appearance: none; border: 1px solid #493734; border-radius: 6px; padding: 10px 34px 10px 12px; color: #e6eae3; background: #241b1a; cursor: pointer; }
 .report-meta { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 14px 28px; border-bottom: 1px solid var(--line); font-size: 12px; color: #9da699; }
 .report-meta > div:first-child { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .report-meta strong { color: #e2e9dd; font-weight: 500; }
@@ -49,8 +50,8 @@ h1 span { color: var(--green); }
 .claim-total { color: #d7dfd1; background: #283126; border-radius: 4px; padding: 3px 7px; }
 .claim-list { padding: 7px; }
 .claim-item { display: grid; grid-template-columns: 8px minmax(0, 1fr) 12px; gap: 12px; align-items: start; width: 100%; text-align: left; padding: 14px 11px; border: 1px solid transparent; border-radius: 7px; color: inherit; background: transparent; cursor: pointer; }
-.claim-item:hover { background: #1c241b; }
-.claim-item.active { border-color: #3d5734; background: #202c1d; }
+.claim-item:hover { background: #261d1c; }
+.claim-item.active { border-color: #69433e; background: #30211f; }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #a3aba0; margin-top: 4px; flex: 0 0 auto; }
 .status-dot.supported { background: #a4e968; box-shadow: 0 0 8px #9ee36055; }
 .status-dot.contradicted { background: #ed806e; }
