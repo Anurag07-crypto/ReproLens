@@ -9,7 +9,9 @@ from src.config import CHROMA_DIR, TOP_K
 from src.index_repo import collection_name, load_repo_chunks
 from src.llm import embed_texts
 
-TOKEN = re.compile(r"[a-z0-9_]+", re.IGNORECASE)
+TOKEN = re.compile(r"[a-z]+|[0-9]+", re.IGNORECASE)
+RRF_K = 10
+PATH_MATCH_BOOST = 2
 
 
 def _terms(text: str) -> list[str]:
@@ -55,18 +57,42 @@ def retrieve_evidence(claim: str, repo: str, repo_name: str | None = None, top_k
     for chunk in lexical_items:
         key = (str(chunk["path"]), int(chunk["start_line"]), int(chunk["end_line"]))
         counts = Counter(_terms(str(chunk["text"])))
+        path_counts = Counter(_terms(str(chunk["path"])))
         overlap = sum(min(count, counts[term]) for term, count in query_counts.items())
+        overlap += PATH_MATCH_BOOST * sum(
+            min(count, path_counts[term]) for term, count in query_counts.items()
+        )
         if overlap:
             lexical_scores[key] = overlap / max(len(query_counts), 1)
-        scored[key] = {**chunk, "repo": repo}
+            scored[key] = {**chunk, "repo": repo}
+
+    lexical_ranks = {
+        key: rank
+        for rank, (key, _) in enumerate(
+            sorted(lexical_scores.items(), key=lambda item: item[1], reverse=True),
+            start=1,
+        )
+    }
+    semantic_ranks: dict[tuple[str, int, int], int] = {}
         
     for rank, item in enumerate(semantic_items, start=1):
         key = (str(item["path"]), int(item["start_line"]), int(item["end_line"]))
         scored[key] = item
-        scored[key]["hybrid_score"] = 1 / (60 + rank)
-        
-    for key, value in lexical_scores.items():
-        scored[key]["hybrid_score"] = float(scored[key].get("hybrid_score", 0)) + value
-    ordered = sorted(scored.values(), key=lambda item: float(item.get("hybrid_score", 0)), reverse=True)
+        semantic_ranks[key] = rank
+
+    for key, item in scored.items():
+        item["hybrid_score"] = sum(
+            1 / (RRF_K + rank)
+            for rank in (lexical_ranks.get(key), semantic_ranks.get(key))
+            if rank is not None
+        )
+    ordered = sorted(
+        scored.values(),
+        key=lambda item: (
+            -float(item["hybrid_score"]),
+            str(item["path"]),
+            int(item["start_line"]),
+        ),
+    )
     
     return ordered[:top_k]

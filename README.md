@@ -10,7 +10,7 @@ ReproLens checks claims against code; it does **not** rerun experiments or verif
 2. Ask an LLM to identify up to six explicit claims (hyperparameters, architecture, datasets, training, and preprocessing).
 3. Clone or read the corresponding repository source files, preserving file paths and line numbers.
 4. Embed line-numbered chunks into a repo-tagged ChromaDB collection.
-5. Retrieve candidates with semantic search and keyword overlap, filtered to the selected repository.
+5. Retrieve candidates with semantic search and keyword overlap, filtered to the selected repository; combine their rankings with reciprocal-rank fusion.
 6. Ask the LLM to classify each claim using only retrieved evidence. Citations are checked against the actual retrieved file and line ranges before they are included in a report.
 7. Display the report in the web UI and compare predictions to hand-labelled claims with the evaluation scripts.
 

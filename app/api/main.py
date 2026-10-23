@@ -3,6 +3,8 @@ import re
 from pathlib import Path
 from typing import Any
 import sys
+import os
+import uvicorn
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -64,3 +66,7 @@ def home():
             "web": "Run the web app with `cd app/web && npm install && npm run dev`.",
         }
     )
+    
+if __name__ == "__main__":
+    reload_enabled = os.getenv("UVICORN_RELOAD", "false").lower() == "true"
+    uvicorn.run("main:app", port=8000, host="127.0.0.1", reload=reload_enabled)

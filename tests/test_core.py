@@ -210,6 +210,89 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(evidence[0]["repo"], "owner/repo")
         self.assertIn("Adam", evidence[0]["text"])
 
+    def test_retrieval_fuses_semantic_and_lexical_ranks(self):
+        with tempfile.TemporaryDirectory() as temp:
+            chroma_dir = Path(temp) / "chroma"
+            chroma_dir.mkdir()
+            chunks = [
+                {
+                    "path": "generic.py",
+                    "start_line": 1,
+                    "end_line": 1,
+                    "text": "alpha beta gamma",
+                },
+                {
+                    "path": "specific.py",
+                    "start_line": 1,
+                    "end_line": 1,
+                    "text": "alpha beta",
+                },
+            ]
+            collection = Mock()
+            collection.count.return_value = len(chunks)
+            collection.query.return_value = {
+                "documents": [["alpha beta"]],
+                "metadatas": [[
+                    {
+                        "repo": "owner/repo",
+                        "path": "specific.py",
+                        "start_line": 1,
+                        "end_line": 1,
+                    }
+                ]],
+                "distances": [[0.1]],
+            }
+            client = Mock()
+            client.get_or_create_collection.return_value = collection
+
+            with (
+                patch("src.retrieve.CHROMA_DIR", chroma_dir),
+                patch("src.retrieve.embed_texts", return_value=[[1.0, 0.0]]),
+                patch("src.retrieve.load_repo_chunks", return_value=chunks),
+                patch("src.retrieve.chromadb.PersistentClient", return_value=client),
+            ):
+                evidence = retrieve_evidence("alpha beta gamma", "owner/repo", top_k=1)
+
+        self.assertEqual(evidence[0]["path"], "specific.py")
+
+    def test_retrieval_matches_underscored_terms_in_file_paths(self):
+        with tempfile.TemporaryDirectory() as temp:
+            chroma_dir = Path(temp) / "chroma"
+            chroma_dir.mkdir()
+            chunks = [
+                {
+                    "path": "generic.py",
+                    "start_line": 1,
+                    "end_line": 1,
+                    "text": "prediction 12",
+                },
+                {
+                    "path": "scripts/PEMS_96_12.sh",
+                    "start_line": 1,
+                    "end_line": 1,
+                    "text": "prediction 12",
+                },
+            ]
+            collection = Mock()
+            collection.count.return_value = len(chunks)
+            collection.query.return_value = {
+                "documents": [[]],
+                "metadatas": [[]],
+                "distances": [[]],
+            }
+            client = Mock()
+            client.get_or_create_collection.return_value = collection
+
+            with (
+                patch("src.retrieve.CHROMA_DIR", chroma_dir),
+                patch("src.retrieve.embed_texts", return_value=[[1.0, 0.0]]),
+                patch("src.retrieve.load_repo_chunks", return_value=chunks),
+                patch("src.retrieve.chromadb.PersistentClient", return_value=client),
+            ):
+                evidence = retrieve_evidence("PEMS prediction 12", "owner/repo", top_k=1)
+
+        self.assertEqual(evidence[0]["path"], "scripts/PEMS_96_12.sh")
+
     @patch("src.verify.complete_json")
     def test_verifier_accepts_only_line_ranges_from_retrieved_code(self, complete_json):
         complete_json.return_value = {
