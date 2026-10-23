@@ -68,6 +68,12 @@ Open the Vite URL shown in the terminal (usually `http://localhost:5173`). The A
 
 The API exposes `GET /repos` and `GET /report/<repo-name>` for repository availability and report JSON. The same endpoints are also available under `/api/` for the web UI.
 
+### Deploy the frontend to Vercel and API to Render
+
+Deploy `app/web` as the Vercel project root with the build command `npm run build` and output directory `dist`. The production frontend defaults to `https://reprolens-backend.onrender.com`; set the Vercel environment variable `VITE_API_BASE_URL` if your API uses a different URL.
+
+The API allows requests from Vercel-hosted `*.vercel.app` origins. If you use a custom frontend domain, add it to Render's environment as `CORS_ALLOWED_ORIGINS` (comma-separated if there are multiple), for example `https://reprolens.example.com`. Redeploy after changing environment variables.
+
 ## Evaluation
 
 Add hand-verified rows to `data/labels.csv` with columns `repo,claim_type,claim,ground_truth,evidence_file,rationale`. Determine each ground truth by inspecting the repository independently, not by copying the pipeline's verdict or citations. `ground_truth` must be `supported`, `contradicted`, or `not_found`; include source paths and a short rationale for each manual label. Populate `data/splits.json` with repository identifiers in separate `dev` and `test` arrays; keep repositories disjoint between splits. Use repository identifiers in labels and splits exactly as the pipeline report's `repo` value, for example `thuml/iTransformer`.

@@ -9,6 +9,7 @@ import uvicorn
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -16,6 +17,19 @@ from src.config import REPORTS_DIR, ROOT
 from src.download_repos import read_repos
 
 app = FastAPI(title="ReproLens API", description="Check paper experiment claims against repository code.")
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", *allowed_origins],
+    allow_origin_regex=r"^https://[a-zA-Z0-9.-]+\.vercel\.app$",
+    allow_credentials=False,
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 REPO_NAME = re.compile(r"^[A-Za-z0-9_.-]+$")
 ASSETS_DIR = ROOT / "app" / "web" / "dist" / "assets"
 if ASSETS_DIR.is_dir():

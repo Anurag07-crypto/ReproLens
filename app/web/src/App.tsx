@@ -18,8 +18,13 @@ const labels: Record<Verdict, string> = {
   not_found: "Not found",
 };
 
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? "https://reprolens-backend.onrender.com" : "")
+).replace(/\/+$/, "");
+
 async function requestJson<T>(path: string): Promise<T> {
-  const response = await fetch(path);
+  const response = await fetch(`${API_BASE_URL}${path}`);
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
     throw new Error(body.detail || `Request failed (${response.status})`);
